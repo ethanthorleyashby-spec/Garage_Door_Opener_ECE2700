@@ -40,20 +40,43 @@ begin
 
 --state logic
     process(current_state, TOP_L, BOTTOM_L, SENSOR_L, BUTTON_L)
+    
+    -- Ready Down
             if current_state is ReadyDown then
-                if BUTTON_L = "1" then
+                if BUTTON_L = '1' then
                     next_state is ReadyDown;
-                elsif not BUTTON_L and BOTTOM_L and SENSOR_L = "1" then
+                elsif not BUTTON_L and BOTTOM_L and SENSOR_L = '1' then
                     next_state is GoingDown;
                 elsif not BOTTON_L and (not BOTTOM_L or not SENSOR_L) then
                     next_state is GoingUp;
-                
+                end if;
+    -- Going Down
             elsif current_state is GoingDown then
+                if BUTTON_L and SENSOR_L and Bottom_L = '1' then
+                    next_state is GoingDown;
+                elsif Button_L and not SENSOR_L = '1' then
+                    next_state is Goingup;
+                elsif not BUTTON_L or Bottom_L = '1'  then
+                    next_state is ReadyUp;
+                End if;
 
+    -- Ready Up
             elsif current_state is ReadyUp then
+                if BUTTON_L = '1' then 
+                    next_state is ReadyUp;
+                elsif not BUTTON_L and not TOP_L ='1' then
+                    next_state is GoingDown;
+                elsif not BUTTON_L and TOP_L ='1' then
+                    next_state is GoingUp;
+                end if;
 
+    -- Going Up
             elsif current_state is GoingUp then
-
+                if BUTTON_L and TOP_L = '1' then
+                    next_state is GoingUp;
+                elsif not BUTTON_L or not TOP_L = '1' then
+                    next_state is ReadyDown;
+                end if;
             end if;
     end process;
 end behavioral;
